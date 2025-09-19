@@ -1,0 +1,40 @@
+
+
+spring:
+ autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+ application:
+    name: test_task_comparus
+
+
+
+app:
+  data-sources:
+    - name: postgres
+      strategy: postgres
+      driver-class-name: org.postgresql.Driver
+      url: ${APP_DS_POSTGRES_URL:jdbc:postgresql://localhost:5432/comparus}
+      username: ${APP_DS_POSTGRES_USER:appuser}
+      password: ${APP_DS_POSTGRES_PASS:apppass}
+      table: users
+      mapping:
+        id: user_id
+        username: login
+        name: first_name
+        surname: last_name
+
+    - name: mariadb
+      strategy: mariadb
+      driver-class-name: org.mariadb.jdbc.Driver
+      url: ${APP_DS_MARIADB_URL:jdbc:mariadb://localhost:3306/comparus}
+      username: ${APP_DS_MARIADB_USER:admin}
+      password: ${APP_DS_MARIADB_PASS:admin123}
+      table: user_table
+      mapping:
+        id: ldap_login
+        username: ldap_login
+        name: name
+        surname: surname

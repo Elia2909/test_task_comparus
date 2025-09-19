@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234qwer
+      POSTGRES_DB: comparus
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-dbs/postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB" ]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: admin123
+      MARIADB_ROOT_PASSWORD: root123
+      MARIADB_DATABASE: comparus
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init-dbs/mariadb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u$MARIADB_USER -p$MARIADB_PASSWORD --silent"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_DS_POSTGRES_URL: jdbc:postgresql://postgres:5432/comparus
+      APP_DS_POSTGRES_USER: postgres
+      APP_DS_POSTGRES_PASS: 1234qwer
+      APP_DS_MARIADB_URL: jdbc:mariadb://mariadb:3306/comparus
+      APP_DS_MARIADB_USER: admin
+      APP_DS_MARIADB_PASS: admin123
+      TZ: UTC
+      JAVA_TOOL_OPTIONS: -Duser.timezone=UTC
+    ports: [ "8080:8080" ]
