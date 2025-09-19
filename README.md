@@ -51,6 +51,8 @@ GRANT ALL PRIVILEGES ON comparus.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 
 ```
+# Test endpoint
+For test enpoints open link http://localhost:8080/swagger-ui/index.html#/
 
 # Remark 
 In TestTaskComparusApplication before SpringApplication.run(TestTaskComparusApplication.class, args) is placed line of code for resolve bug with Java version,
