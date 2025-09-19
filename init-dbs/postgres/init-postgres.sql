@@ -15,6 +15,3 @@ $$
         END IF;
     END
 $$;
-
-ALTER SYSTEM SET TimeZone = 'Europe/Kiev';
-SELECT pg_reload_conf();
